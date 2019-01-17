@@ -35,12 +35,12 @@ class UnidadeExploracaoTestCase(unittest.TestCase):
         self.assertEqual(2812, str(res.data))
 
     def test_api_can_get_unidade_exploracao_by_id(self):
-        """Test API can get a single UnidadExploracao by using it's id."""
+        """Test API can get a single UnidadExploracao by using it's nrUnidadeExploracao."""
         rv = self.client().post('/UnidadeExploracao/', data=self.unidadeexp)
         self.assertEqual(rv.status_code, 201)
         result_in_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
         result = self.client().get(
-            '/UnidadeExploracao/{}'.format(result_in_json['id']))
+            '/UnidadeExploracao/{}'.format(result_in_json['nrUnidadeExploracao']))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(2812, str(result.data))
 
