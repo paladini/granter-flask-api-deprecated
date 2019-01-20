@@ -15,7 +15,20 @@ class ProdutorTestCase(unittest.TestCase):
             "nrDocumento": "083.843.589-07",
             "nmProdutor": "Fernando Paladini",
             "nrTelefone": "(48) 99845-9684",
-            "dsEmail": "paladini@1doc.com.br"
+            "dsEmail": "paladini@1doc.com.br",
+            "cdEstabelecimento": 0
+        }
+        self.estabelecimento = {
+            "nmEstabelecimento": "Granja Santa Clara",
+            "nrCodigoOficial": "42-0003256",
+            "idPais": 1,
+            "idUf": 24,
+            "idMunicipio": 2812,
+            "nmLocalidade": "Rua Retangular, número 182. Bairro Santa Clara.",
+            "nrLatitude": -28.098883,
+            "nrLongitude": -28.098883,
+            "stAtivo": True,
+            "idCliente": 10
         }
 
         # binds the app to the current context
@@ -25,13 +38,35 @@ class ProdutorTestCase(unittest.TestCase):
 
     def test_produtor_creation(self):
         """Test API can create a produtor (POST request)"""
+
+        # Create a new estabelecimento
+        estab = self.client().post('/Estabelecimento/', data=self.estabelecimento)
+        estab_json = json.loads(estab.data.decode('utf-8').replace("'", "\""))
+        self.assertEqual(estab.status_code, 201)
+
+        # Assign estabelecimento to produtor
+        self.produtor["cdEstabelecimento"] = estab_json["idEstabelecimento"]
+
+        # Create a new produtor
         res = self.client().post('/Produtor/', data=self.produtor)
         res_json = json.loads(res.data.decode('utf-8').replace("'", "\""))
         self.assertEqual(res.status_code, 201)
         self.assertEqual(self.produtor["nmProdutor"], res_json["nmProdutor"])
+        self.assertEqual(self.produtor["nrDocumento"], res_json["nrDocumento"])
+        self.assertEqual(self.produtor["nrTelefone"], res_json["nrTelefone"])
+        self.assertEqual(self.produtor["dsEmail"], res_json["dsEmail"])
+        self.assertEqual(self.produtor["cdEstabelecimento"], res_json["cdEstabelecimento"])
 
     def test_api_can_get_all_produtores(self):
         """Test API can get a produtor (GET request)."""
+
+        # Create a new estabelecimento
+        estab = self.client().post('/Estabelecimento/', data=self.estabelecimento)
+        estab_json = json.loads(estab.data.decode('utf-8').replace("'", "\""))
+        self.assertEqual(estab.status_code, 201)
+
+        # Assign estabelecimento to produtor
+        self.produtor["cdEstabelecimento"] = estab_json["idEstabelecimento"]
 
         # Insert new produtor
         res = self.client().post('/Produtor/', data=self.produtor)
@@ -43,10 +78,22 @@ class ProdutorTestCase(unittest.TestCase):
         
         self.assertEqual(res.status_code, 200)
         self.assertEqual(self.produtor["nmProdutor"], res_json[0]["nmProdutor"])
+        self.assertEqual(self.produtor["nrDocumento"], res_json[0]["nrDocumento"])
+        self.assertEqual(self.produtor["nrTelefone"], res_json[0]["nrTelefone"])
+        self.assertEqual(self.produtor["dsEmail"], res_json[0]["dsEmail"])
+        self.assertEqual(self.produtor["cdEstabelecimento"], res_json[0]["cdEstabelecimento"])
 
 
     def test_api_can_get_produtor_by_id(self):
         """Test API can get a single produtor by using it's id."""
+
+        # Create a new estabelecimento
+        estab = self.client().post('/Estabelecimento/', data=self.estabelecimento)
+        estab_json = json.loads(estab.data.decode('utf-8').replace("'", "\""))
+        self.assertEqual(estab.status_code, 201)
+
+        # Assign estabelecimento to produtor
+        self.produtor["cdEstabelecimento"] = estab_json["idEstabelecimento"]
 
         # Insert new produtor
         rv = self.client().post('/Produtor/', data=self.produtor)
@@ -60,6 +107,10 @@ class ProdutorTestCase(unittest.TestCase):
         res_json = json.loads(result.data.decode('utf-8').replace("'", "\""))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(self.produtor["nmProdutor"], res_json["nmProdutor"])
+        self.assertEqual(self.produtor["nrDocumento"], res_json["nrDocumento"])
+        self.assertEqual(self.produtor["nrTelefone"], res_json["nrTelefone"])
+        self.assertEqual(self.produtor["dsEmail"], res_json["dsEmail"])
+        self.assertEqual(self.produtor["cdEstabelecimento"], res_json["cdEstabelecimento"])
 
 
     def test_produtor_can_be_edited(self):
@@ -68,8 +119,18 @@ class ProdutorTestCase(unittest.TestCase):
             "nrDocumento": "072.789.102-10",
             "nmProdutor": "Fernando Paladini Joi",
             "nrTelefone": "(48) 99845-9684",
-            "dsEmail": "fnpaladini@gmail.com"
+            "dsEmail": "fnpaladini@gmail.com",
+            "cdEstabelecimento": 2
         }
+
+        # Create a new estabelecimento
+        estab = self.client().post('/Estabelecimento/', data=self.estabelecimento)
+        estab_json = json.loads(estab.data.decode('utf-8').replace("'", "\""))
+        self.assertEqual(estab.status_code, 201)
+
+        # Assign estabelecimento to produtor
+        self.produtor["cdEstabelecimento"] = estab_json["idEstabelecimento"]
+        updated_data["cdEstabelecimento"] = estab_json["idEstabelecimento"]
 
         # Insert new produtor
         rv = self.client().post('/Produtor/', data=self.produtor)
@@ -87,10 +148,19 @@ class ProdutorTestCase(unittest.TestCase):
         self.assertEqual(updated_data["nmProdutor"], res_json["nmProdutor"])
         self.assertEqual(updated_data["nrTelefone"], res_json["nrTelefone"])
         self.assertEqual(updated_data["dsEmail"], res_json["dsEmail"])
+        self.assertEqual(updated_data["cdEstabelecimento"], res_json["cdEstabelecimento"])
 
 
     def test_produtor_deletion(self):
         """Test API can delete an existing produtor. (DELETE request)."""
+
+        # Create a new estabelecimento
+        estab = self.client().post('/Estabelecimento/', data=self.estabelecimento)
+        estab_json = json.loads(estab.data.decode('utf-8').replace("'", "\""))
+        self.assertEqual(estab.status_code, 201)
+
+        # Assign estabelecimento to produtor
+        self.produtor["cdEstabelecimento"] = estab_json["idEstabelecimento"]
         
         # Create new produtor
         rv = self.client().post('/Produtor/', data=self.produtor)

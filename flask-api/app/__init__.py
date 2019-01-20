@@ -206,7 +206,8 @@ def create_app(config_name):
                     nrDocumento=params["nrDocumento"],
                     nmProdutor=params["nmProdutor"],
                     nrTelefone=params["nrTelefone"],
-                    dsEmail=params["dsEmail"]
+                    dsEmail=params["dsEmail"],
+                    cdEstabelecimento=params["cdEstabelecimento"]
                 )
                 produt.save()
 
@@ -215,7 +216,8 @@ def create_app(config_name):
                     'nrDocumento': produt.nrDocumento,
                     'nmProdutor': produt.nmProdutor,
                     'nrTelefone': produt.nrTelefone,
-                    'dsEmail': produt.dsEmail
+                    'dsEmail': produt.dsEmail,
+                    'cdEstabelecimento': produt.cdEstabelecimento
                 })
                 response.status_code = 201
                 return response
@@ -233,7 +235,8 @@ def create_app(config_name):
                     'nrDocumento': produt.nrDocumento,
                     'nmProdutor': produt.nmProdutor,
                     'nrTelefone': produt.nrTelefone,
-                    'dsEmail': produt.dsEmail
+                    'dsEmail': produt.dsEmail,
+                    'cdEstabelecimento': produt.cdEstabelecimento
                 }
                 results.append(obj)
             response = jsonify(results)
@@ -273,13 +276,17 @@ def create_app(config_name):
             if "dsEmail" in params:
                 produt.dsEmail = params["dsEmail"]
 
+            if "cdEstabelecimento" in params:
+                produt.cdEstabelecimento = params["cdEstabelecimento"]
+
             produt.save()
             response = jsonify({
                 'idProdutor': produt.idProdutor,
                 'nrDocumento': produt.nrDocumento,
                 'nmProdutor': produt.nmProdutor,
                 'nrTelefone': produt.nrTelefone,
-                'dsEmail': produt.dsEmail
+                'dsEmail': produt.dsEmail,
+                'cdEstabelecimento': produt.cdEstabelecimento
             })
             response.status_code = 200
             return response
@@ -290,7 +297,8 @@ def create_app(config_name):
                 'nrDocumento': produt.nrDocumento,
                 'nmProdutor': produt.nmProdutor,
                 'nrTelefone': produt.nrTelefone,
-                'dsEmail': produt.dsEmail
+                'dsEmail': produt.dsEmail,
+                'cdEstabelecimento': produt.cdEstabelecimento
             })
             response.status_code = 200
             return response

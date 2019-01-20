@@ -28,10 +28,6 @@ class Estabelecimento(db.Model):
         db.DateTime, default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp())
 
-    # def __init__(self, nmEstabelecimento):
-    #     """initialize with nmEstabelecimento."""
-    #     self.nmEstabelecimento = nmEstabelecimento
-
     def save(self):
         db.session.add(self)
         db.session.commit()
@@ -81,8 +77,6 @@ class Produtor(db.Model):
     nmProdutor = db.Column(db.String(255))
     nrTelefone = db.Column(db.String(255))
     dsEmail = db.Column(db.String(255))
-    # cdEstabelecimento = db.Column(db.Integer)
-    # estabelecimento = 
 
     # Estabelecimento (Many-to-One relationship)
     cdEstabelecimento = Column(Integer, ForeignKey('estabelecimento.idEstabelecimento'))
@@ -92,10 +86,6 @@ class Produtor(db.Model):
     updated_at = db.Column(
         db.DateTime, default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp())
-
-    # def __init__(self, nmProdutor):
-    #     """initialize with nmProdutor."""
-    #     self.nmProdutor = nmProdutor
 
     def save(self):
         db.session.add(self)
@@ -108,7 +98,8 @@ class Produtor(db.Model):
             'nrDocumento': str(request.data.get('nrDocumento')),
             'nmProdutor': str(request.data.get('nmProdutor')),
             'nrTelefone': str(request.data.get('nrTelefone')),
-            'dsEmail': str(request.data.get('dsEmail'))
+            'dsEmail': str(request.data.get('dsEmail')),
+            'cdEstabelecimento': str(request.data.get('cdEstabelecimento'))
         }
 
         idProd = request.data.get('idProdutor')
@@ -135,7 +126,6 @@ class UnidadeExploracao(db.Model):
 
     idUnidadeExploracao = db.Column(db.Integer, primary_key=True)
     nrUnidadeExploracao = db.Column(db.Integer)
-    # cdEstabelecimento = db.Column(db.Integer)
     qtCapacidadeAlojamento = db.Column(db.Integer)
     csTipoUnidadeExploracao = db.Column(db.String(255))
     stAtiva = db.Column(db.Boolean)
@@ -150,9 +140,6 @@ class UnidadeExploracao(db.Model):
         db.DateTime, default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp())
 
-    # def __init__(self, idUnidadeExploracao):
-    #     """initialize with nrUnidadeExploracao."""
-    #     self.idUnidadeExploracao = idUnidadeExploracao
 
     def save(self):
         db.session.add(self)
