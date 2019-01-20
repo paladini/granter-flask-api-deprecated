@@ -34,9 +34,7 @@ class EstabelecimentoTestCase(unittest.TestCase):
         res = self.client().post('/Estabelecimento/', data=self.estabelecimento)
         res_json = json.loads(res.data.decode('utf-8').replace("'", "\""))
         self.assertEqual(res.status_code, 201)
-        # print(res.data)
         self.assertEqual(self.estabelecimento["nmEstabelecimento"], res_json["nmEstabelecimento"])
-        # self.assertEqual(self.estabelecimento, str(res.data))
 
     def test_api_can_get_all_estabelecimentos(self):
         """Test API can get a estabelecimento (GET request)."""
@@ -49,20 +47,23 @@ class EstabelecimentoTestCase(unittest.TestCase):
         res = self.client().get('/Estabelecimento/')
         res_json = json.loads(res.data.decode('utf-8').replace("'", "\""))
         
-        # self.assertEqual('Granja Santa Clara', str(res.data))
         self.assertEqual(res.status_code, 200)
         self.assertEqual(self.estabelecimento["nmEstabelecimento"], res_json[0]["nmEstabelecimento"])
 
 
     def test_api_can_get_estabelecimento_by_id(self):
         """Test API can get a single estabelecimento by using it's id."""
+
+        # Insert new estabelecimento
         rv = self.client().post('/Estabelecimento/', data=self.estabelecimento)
         self.assertEqual(rv.status_code, 201)
 
+        # Get the estabelecimento recently created.
         res_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
         result = self.client().get('/Estabelecimento/{}'.format(res_json['idEstabelecimento']))
+        
+        # Assert that estabelecimento exists and has the same value of the inserted estabelecimento.
         self.assertEqual(result.status_code, 200)
-        # self.assertIn('Granja Santa Clara', str(result.data))
         self.assertEqual(self.estabelecimento["nmEstabelecimento"], res_json["nmEstabelecimento"])
 
 
@@ -98,12 +99,15 @@ class EstabelecimentoTestCase(unittest.TestCase):
 
     def test_estabelecimento_deletion(self):
         """Test API can delete an existing estabelecimento. (DELETE request)."""
-        rv = self.client().post(
-            '/Estabelecimento/',
-            data={'name': 'Um outro nome qualquer'})
+        
+        # Create new estabelecimento
+        rv = self.client().post('/Estabelecimento/', data=self.estabelecimento)
         self.assertEqual(rv.status_code, 201)
+
+        # Delete estabelecimento created earlier
         res = self.client().delete('/Estabelecimento/1')
         self.assertEqual(res.status_code, 200)
+
         # Test to see if it exists, should return a 404
         result = self.client().get('/Estabelecimento/1')
         self.assertEqual(result.status_code, 404)
