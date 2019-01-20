@@ -21,13 +21,13 @@ class UnidadeExploracaoTestCase(unittest.TestCase):
             db.create_all()
 
     def test_unidade_exploracao_creation(self):
-        """Test API can create a UnidadExploracao (POST request)"""
+        """Test API can create a UnidadeExploracao (POST request)"""
         res = self.client().post('/UnidadeExploracao/', data=self.unidadeexp)
         self.assertEqual(res.status_code, 201)
         self.assertEqual(2812, str(res.data))
 
     def test_api_can_get_all_unidades_exploracao(self):
-        """Test API can get a UnidadExploracao (GET request)."""
+        """Test API can get a UnidadeExploracao (GET request)."""
         res = self.client().post('/UnidadeExploracao/', data=self.unidadeexp)
         self.assertEqual(res.status_code, 201)
         res = self.client().get('/UnidadeExploracao/')
@@ -35,12 +35,12 @@ class UnidadeExploracaoTestCase(unittest.TestCase):
         self.assertEqual(2812, str(res.data))
 
     def test_api_can_get_unidade_exploracao_by_id(self):
-        """Test API can get a single UnidadExploracao by using it's nrUnidadeExploracao."""
+        """Test API can get a single UnidadeExploracao by using it's idUnidadeExploracao."""
         rv = self.client().post('/UnidadeExploracao/', data=self.unidadeexp)
         self.assertEqual(rv.status_code, 201)
         result_in_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
         result = self.client().get(
-            '/UnidadeExploracao/{}'.format(result_in_json['nrUnidadeExploracao']))
+            '/UnidadeExploracao/{}'.format(result_in_json['idUnidadeExploracao']))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(2812, str(result.data))
 

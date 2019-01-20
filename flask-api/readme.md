@@ -4,7 +4,7 @@
 
 TODO
 
-## How to Setup
+## Setup
 
 Before anything else, you need to install all needed packages. If you have not started an environment, please do that with the following commands:
 
@@ -34,6 +34,18 @@ Let's install all the needed packages with the following command:
 ```
 
 Now you should be able to run the code without any problems.
+
+### 2.1 - Setup database
+
+Type the following commands in your Terminal in order to migrate the models to our PostgreSQL database:
+
+```
+(env) $ python manage.py db init
+(env) $ python manage.py db migrate
+(env) $ python manage.py db upgrade
+```
+
+
 
 ## How to Use
 

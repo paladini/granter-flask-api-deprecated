@@ -2,6 +2,7 @@
 from app import db
 from sqlalchemy import Table, Column, Float, Integer, String, MetaData, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship
+from flask import request, jsonify, abort
 
 class Estabelecimento(db.Model):
     """This class represents the Estabelecimento table."""
@@ -27,13 +28,36 @@ class Estabelecimento(db.Model):
         db.DateTime, default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp())
 
-    def __init__(self, nmEstabelecimento):
-        """initialize with nmEstabelecimento."""
-        self.nmEstabelecimento = nmEstabelecimento
+    # def __init__(self, nmEstabelecimento):
+    #     """initialize with nmEstabelecimento."""
+    #     self.nmEstabelecimento = nmEstabelecimento
 
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+    @staticmethod
+    def get_params(request):
+
+        data = {
+            'nmEstabelecimento': str(request.data.get('nmEstabelecimento')),
+            'nrCodigoOficial': str(request.data.get('nrCodigoOficial')),
+            'idPais': request.data.get('idPais'),
+            'idUf': request.data.get('idUf'),
+            'idMunicipio': request.data.get('idMunicipio'),
+            'nmLocalidade': str(request.data.get('nmLocalidade')),
+            'nrLatitude': request.data.get('nrLatitude'),
+            'nrLongitude': request.data.get('nrLongitude'),
+            'stAtivo': bool(request.data.get('stAtivo')),
+            'idCliente': request.data.get('idCliente')
+        }
+
+        idEstab = request.data.get('idEstabelecimento')
+        if idEstab:
+            data["idEstabelecimento"] = idEstab
+            
+        return data
+
 
     @staticmethod
     def get_all():
@@ -69,9 +93,9 @@ class Produtor(db.Model):
         db.DateTime, default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp())
 
-    def __init__(self, nmProdutor):
-        """initialize with nmProdutor."""
-        self.nmProdutor = nmProdutor
+    # def __init__(self, nmProdutor):
+    #     """initialize with nmProdutor."""
+    #     self.nmProdutor = nmProdutor
 
     def save(self):
         db.session.add(self)
@@ -95,7 +119,7 @@ class UnidadeExploracao(db.Model):
 
     idUnidadeExploracao = db.Column(db.Integer, primary_key=True)
     nrUnidadeExploracao = db.Column(db.Integer)
-    cdEstabelecimento = db.Column(db.Integer)
+    # cdEstabelecimento = db.Column(db.Integer)
     qtCapacidadeAlojamento = db.Column(db.Integer)
     csTipoUnidadeExploracao = db.Column(db.String(255))
     stAtiva = db.Column(db.Boolean)
@@ -110,9 +134,9 @@ class UnidadeExploracao(db.Model):
         db.DateTime, default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp())
 
-    def __init__(self, nrUnidadeExploracao):
-        """initialize with nrUnidadeExploracao."""
-        self.nrUnidadeExploracao = nrUnidadeExploracao
+    # def __init__(self, idUnidadeExploracao):
+    #     """initialize with nrUnidadeExploracao."""
+    #     self.idUnidadeExploracao = idUnidadeExploracao
 
     def save(self):
         db.session.add(self)
@@ -127,4 +151,4 @@ class UnidadeExploracao(db.Model):
         db.session.commit()
 
     def __repr__(self):
-        return "<UnidadeExploracao: {}>".format(self.nrUnidadeExploracao)
+        return "<UnidadeExploracao: {}>".format(self.idUnidadeExploracao)
