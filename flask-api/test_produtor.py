@@ -57,6 +57,7 @@ class ProdutorTestCase(unittest.TestCase):
         result = self.client().get('/Produtor/{}'.format(res_json['idProdutor']))
         
         # Assert that produtor exists and has the same value of the inserted produtor.
+        res_json = json.loads(result.data.decode('utf-8').replace("'", "\""))
         self.assertEqual(result.status_code, 200)
         self.assertEqual(self.produtor["nmProdutor"], res_json["nmProdutor"])
 

@@ -20,7 +20,7 @@ class EstabelecimentoTestCase(unittest.TestCase):
             "nmLocalidade": "Rua Retangular, número 182. Bairro Santa Clara.",
             "nrLatitude": -28.098883,
             "nrLongitude": -28.098883,
-            "stAtivo": 1,
+            "stAtivo": True,
             "idCliente": 10
         }
 
@@ -35,6 +35,15 @@ class EstabelecimentoTestCase(unittest.TestCase):
         res_json = json.loads(res.data.decode('utf-8').replace("'", "\""))
         self.assertEqual(res.status_code, 201)
         self.assertEqual(self.estabelecimento["nmEstabelecimento"], res_json["nmEstabelecimento"])
+        self.assertEqual(self.estabelecimento["nrCodigoOficial"], res_json["nrCodigoOficial"])
+        self.assertEqual(self.estabelecimento["idPais"], res_json["idPais"])
+        self.assertEqual(self.estabelecimento["idUf"], res_json["idUf"])
+        self.assertEqual(self.estabelecimento["idMunicipio"], res_json["idMunicipio"])
+        self.assertEqual(self.estabelecimento["nmLocalidade"], res_json["nmLocalidade"])
+        self.assertEqual(self.estabelecimento["nrLatitude"], res_json["nrLatitude"])
+        self.assertEqual(self.estabelecimento["nrLongitude"], res_json["nrLongitude"])
+        self.assertEqual(self.estabelecimento["stAtivo"], res_json["stAtivo"])
+        self.assertEqual(self.estabelecimento["idCliente"], res_json["idCliente"])
 
     def test_api_can_get_all_estabelecimentos(self):
         """Test API can get a estabelecimento (GET request)."""
@@ -49,6 +58,15 @@ class EstabelecimentoTestCase(unittest.TestCase):
         
         self.assertEqual(res.status_code, 200)
         self.assertEqual(self.estabelecimento["nmEstabelecimento"], res_json[0]["nmEstabelecimento"])
+        self.assertEqual(self.estabelecimento["nrCodigoOficial"], res_json[0]["nrCodigoOficial"])
+        self.assertEqual(self.estabelecimento["idPais"], res_json[0]["idPais"])
+        self.assertEqual(self.estabelecimento["idUf"], res_json[0]["idUf"])
+        self.assertEqual(self.estabelecimento["idMunicipio"], res_json[0]["idMunicipio"])
+        self.assertEqual(self.estabelecimento["nmLocalidade"], res_json[0]["nmLocalidade"])
+        self.assertEqual(self.estabelecimento["nrLatitude"], res_json[0]["nrLatitude"])
+        self.assertEqual(self.estabelecimento["nrLongitude"], res_json[0]["nrLongitude"])
+        self.assertEqual(self.estabelecimento["stAtivo"], res_json[0]["stAtivo"])
+        self.assertEqual(self.estabelecimento["idCliente"], res_json[0]["idCliente"])
 
 
     def test_api_can_get_estabelecimento_by_id(self):
@@ -65,7 +83,15 @@ class EstabelecimentoTestCase(unittest.TestCase):
         # Assert that estabelecimento exists and has the same value of the inserted estabelecimento.
         self.assertEqual(result.status_code, 200)
         self.assertEqual(self.estabelecimento["nmEstabelecimento"], res_json["nmEstabelecimento"])
-
+        self.assertEqual(self.estabelecimento["nrCodigoOficial"], res_json["nrCodigoOficial"])
+        self.assertEqual(self.estabelecimento["idPais"], res_json["idPais"])
+        self.assertEqual(self.estabelecimento["idUf"], res_json["idUf"])
+        self.assertEqual(self.estabelecimento["idMunicipio"], res_json["idMunicipio"])
+        self.assertEqual(self.estabelecimento["nmLocalidade"], res_json["nmLocalidade"])
+        self.assertEqual(self.estabelecimento["nrLatitude"], res_json["nrLatitude"])
+        self.assertEqual(self.estabelecimento["nrLongitude"], res_json["nrLongitude"])
+        self.assertEqual(self.estabelecimento["stAtivo"], res_json["stAtivo"])
+        self.assertEqual(self.estabelecimento["idCliente"], res_json["idCliente"])
 
     def test_estabelecimento_can_be_edited(self):
         """Test API can edit an existing estabelecimento. (PUT request)"""
@@ -78,7 +104,7 @@ class EstabelecimentoTestCase(unittest.TestCase):
             "nmLocalidade": "Rua Retangular, número 182. Bairro Santa Clara.",
             "nrLatitude": -28.098883,
             "nrLongitude": -28.098883,
-            "stAtivo": 1,
+            "stAtivo": True,
             "idCliente": 10
         }
 
@@ -95,7 +121,15 @@ class EstabelecimentoTestCase(unittest.TestCase):
         res_json = json.loads(results.data.decode('utf-8').replace("'", "\""))
         
         self.assertEqual(updated_data["nmEstabelecimento"], res_json["nmEstabelecimento"])
-
+        self.assertEqual(updated_data["nrCodigoOficial"], res_json["nrCodigoOficial"])
+        self.assertEqual(updated_data["idPais"], res_json["idPais"])
+        self.assertEqual(updated_data["idUf"], res_json["idUf"])
+        self.assertEqual(updated_data["idMunicipio"], res_json["idMunicipio"])
+        self.assertEqual(updated_data["nmLocalidade"], res_json["nmLocalidade"])
+        self.assertEqual(updated_data["nrLatitude"], res_json["nrLatitude"])
+        self.assertEqual(updated_data["nrLongitude"], res_json["nrLongitude"])
+        self.assertEqual(updated_data["stAtivo"], res_json["stAtivo"])
+        self.assertEqual(updated_data["idCliente"], res_json["idCliente"])
 
     def test_estabelecimento_deletion(self):
         """Test API can delete an existing estabelecimento. (DELETE request)."""

@@ -298,77 +298,15 @@ def create_app(config_name):
     #
     # UNIDADES DE EXPLORAÇÃO
     #
-    @app.route('/UnidadeExploracao/', methods=['POST', 'GET'])
-    def unidadesExploracao():
-        if request.method == "POST":
-            # Get all the parameters for creating a UnidadeExploracao
-            nrUnidadeExploracao = str(request.data.get('nrUnidadeExploracao', ''))
-            nrUnidadeExploracao = str(request.data.get('nrUnidadeExploracao', ''))
-            nrUnidadeExploracao = str(request.data.get('nrUnidadeExploracao', ''))
-            nrUnidadeExploracao = str(request.data.get('nrUnidadeExploracao', ''))
-            nrUnidadeExploracao = str(request.data.get('nrUnidadeExploracao', ''))
-            nrUnidadeExploracao = str(request.data.get('nrUnidadeExploracao', ''))
-            nrUnidadeExploracao = str(request.data.get('nrUnidadeExploracao', ''))
-            nrUnidadeExploracao = str(request.data.get('nrUnidadeExploracao', ''))
-
-            if nrUnidadeExploracao:
-                unidExp = UnidadeExploracao(
-                    nrUnidadeExploracao=nrUnidadeExploracao
-                )
-                unidExp.save()
-                response = jsonify({
-                    'idUnidadeExploracao': unidExp.idUnidadeExploracao,
-                    'nrUnidadeExploracao': unidExp.nrUnidadeExploracao,
-                    'qtCapacidadeAlojamento': unidExp.qtCapacidadeAlojamento,
-                    'csTipoUnidadeExploracao': unidExp.csTipoUnidadeExploracao,
-                    'stAtiva': unidExp.stAtiva,
-                    'csTipoAnimal': unidExp.csTipoAnimal,
-                    'cdEstabelecimento': unidExp.cdEstabelecimento,
-                    'created_at': unidExp.created_at,
-                    'updated_at': unidExp.updated_at
-                })
-                response.status_code = 201
-                return response
-        else:
-            # GET
-            unidadesExploracao = UnidadeExploracao.get_all()
-            results = []
-
-            for unidExp in unidadesExploracao:
-                obj = {
-                    'idUnidadeExploracao': unidExp.idUnidadeExploracao,
-                    'nrUnidadeExploracao': unidExp.nrUnidadeExploracao,
-                    'qtCapacidadeAlojamento': unidExp.qtCapacidadeAlojamento,
-                    'csTipoUnidadeExploracao': unidExp.csTipoUnidadeExploracao,
-                    'stAtiva': unidExp.stAtiva,
-                    'csTipoAnimal': unidExp.csTipoAnimal,
-                    'cdEstabelecimento': unidExp.cdEstabelecimento,
-                    'created_at': unidExp.created_at,
-                    'updated_at': unidExp.updated_at
-                }
-                results.append(obj)
-            response = jsonify(results)
-            response.status_code = 200
-            return response
-
-    @app.route('/UnidadeExploracao/<int:idUnidadeExploracao>', methods=['GET', 'PUT', 'DELETE'])
+    @app.route('/UnidadeExploracao/<int:idUnidadeExploracao>', methods=['GET'])
     def unidadeExploracao_manipulation(idUnidadeExploracao, **kwargs):
-     # retrieve a buckelist using it's ID
+        
+        # Retrieve an UnidadeExploracao using it's ID
         unidExp = UnidadeExploracao.query.filter_by(idUnidadeExploracao=idUnidadeExploracao).first()
         if not unidExp:
-            # Raise an HTTPException with a 404 not found status code
-            abort(404)
+            abort(404) # Raise an HTTPException with a 404 not found status code
 
-        if request.method == 'DELETE':
-            unidExp.delete()
-            return {
-                "message": "UnidadeExploracao {} deleted successfully".format(unidExp.idUnidadeExploracao) 
-            }, 200
-
-        elif request.method == 'PUT':
-            nrUnidadeExploracao = str(request.data.get('nrUnidadeExploracao', ''))
-            unidExp.nrUnidadeExploracao = nrUnidadeExploracao
-            unidExp.save()
+        if request.method == 'GET':
             response = jsonify({
                     'idUnidadeExploracao': unidExp.idUnidadeExploracao,
                     'nrUnidadeExploracao': unidExp.nrUnidadeExploracao,
@@ -383,19 +321,10 @@ def create_app(config_name):
             response.status_code = 200
             return response
         else:
-            # GET
             response = jsonify({
-                    'idUnidadeExploracao': unidExp.idUnidadeExploracao,
-                    'nrUnidadeExploracao': unidExp.nrUnidadeExploracao,
-                    'qtCapacidadeAlojamento': unidExp.qtCapacidadeAlojamento,
-                    'csTipoUnidadeExploracao': unidExp.csTipoUnidadeExploracao,
-                    'stAtiva': unidExp.stAtiva,
-                    'csTipoAnimal': unidExp.csTipoAnimal,
-                    'cdEstabelecimento': unidExp.cdEstabelecimento,
-                    'created_at': unidExp.created_at,
-                    'updated_at': unidExp.updated_at
+                "error": "Invalid method"
             })
-            response.status_code = 200
+            response.status_code = 404
             return response
 
     return app
