@@ -174,7 +174,7 @@ def create_app(config_name):
             response.status_code = 200
             return response
         else:
-            # GET - Return an etabelecimento
+            # GET - Return an estabelecimento
             response = jsonify({
                 'idEstabelecimento': estab.idEstabelecimento,
                 'nmEstabelecimento': estab.nmEstabelecimento,
@@ -187,6 +187,110 @@ def create_app(config_name):
                 'nrLongitude': estab.nrLongitude,
                 'stAtivo': estab.stAtivo,
                 'idCliente': estab.idCliente
+            })
+            response.status_code = 200
+            return response
+
+    #
+    # PRODUTORES
+    #
+    @app.route('/Produtor/', methods=['POST', 'GET'])
+    def produtores():
+        if request.method == "POST":
+
+            # Get all the parameters for creating a Produtor
+            params = Produtor.get_params(request)
+
+            if params:
+                produt = Produtor(
+                    nrDocumento=params["nrDocumento"],
+                    nmProdutor=params["nmProdutor"],
+                    nrTelefone=params["nrTelefone"],
+                    dsEmail=params["dsEmail"]
+                )
+                produt.save()
+
+                response = jsonify({
+                    'idProdutor': produt.idProdutor,
+                    'nrDocumento': produt.nrDocumento,
+                    'nmProdutor': produt.nmProdutor,
+                    'nrTelefone': produt.nrTelefone,
+                    'dsEmail': produt.dsEmail
+                })
+                response.status_code = 201
+                return response
+            else:
+                print(request.data)    
+        else:
+
+            # GET
+            produtores = Produtor.get_all()
+            results = []
+
+            for produt in produtores:
+                obj = {
+                    'idProdutor': produt.idProdutor,
+                    'nrDocumento': produt.nrDocumento,
+                    'nmProdutor': produt.nmProdutor,
+                    'nrTelefone': produt.nrTelefone,
+                    'dsEmail': produt.dsEmail
+                }
+                results.append(obj)
+            response = jsonify(results)
+            response.status_code = 200
+            return response
+
+    @app.route('/Produtor/<int:idProdutor>', methods=['GET', 'PUT', 'DELETE'])
+    def produtores_manipulation(idProdutor, **kwargs):
+     
+        # Retrieve a produtor using it's ID. 
+        produt = Produtor.query.filter_by(idProdutor=idProdutor).first()
+        if not produt:
+            abort(404) # Raise an HTTPException with a 404 not found status code
+
+        # Delete a produtor
+        if request.method == 'DELETE':
+            produt.delete()
+            return ({
+                "message": "Produtor {} deleted successfully".format(produt.idProdutor) 
+            }, 200)
+
+        # Update a produtor
+        elif request.method == 'PUT':
+
+            # Get all params and check if a new value was given in the request
+            params = Produtor.get_params(request)
+
+            if "nrDocumento" in params:
+                produt.nrDocumento = params["nrDocumento"]
+
+            if "nmProdutor" in params:
+                produt.nmProdutor = params["nmProdutor"]
+
+            if "nrTelefone" in params:
+                produt.nrTelefone = params["nrTelefone"]
+
+            if "dsEmail" in params:
+                produt.dsEmail = params["dsEmail"]
+
+            produt.save()
+            response = jsonify({
+                'idProdutor': produt.idProdutor,
+                'nrDocumento': produt.nrDocumento,
+                'nmProdutor': produt.nmProdutor,
+                'nrTelefone': produt.nrTelefone,
+                'dsEmail': produt.dsEmail
+            })
+            response.status_code = 200
+            return response
+        else:
+            # GET - Return a produtor
+            response = jsonify({
+                'idProdutor': produt.idProdutor,
+                'nrDocumento': produt.nrDocumento,
+                'nmProdutor': produt.nmProdutor,
+                'nrTelefone': produt.nrTelefone,
+                'dsEmail': produt.dsEmail
             })
             response.status_code = 200
             return response

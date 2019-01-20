@@ -102,6 +102,22 @@ class Produtor(db.Model):
         db.session.commit()
 
     @staticmethod
+    def get_params(request):
+
+        data = {
+            'nrDocumento': str(request.data.get('nrDocumento')),
+            'nmProdutor': str(request.data.get('nmProdutor')),
+            'nrTelefone': str(request.data.get('nrTelefone')),
+            'dsEmail': str(request.data.get('dsEmail'))
+        }
+
+        idProd = request.data.get('idProdutor')
+        if idProd:
+            data["idProdutor"] = idProd
+            
+        return data
+
+    @staticmethod
     def get_all():
         return Produtor.query.all()
 

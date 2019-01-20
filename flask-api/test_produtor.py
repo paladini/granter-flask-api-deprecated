@@ -5,14 +5,17 @@ from app import create_app, db
 
 
 class ProdutorTestCase(unittest.TestCase):
-    """This class represents the Produtor test case"""
+    """This class represents the produtor test case"""
 
     def setUp(self):
         """Define test variables and initialize app."""
         self.app = create_app(config_name="testing")
         self.client = self.app.test_client
         self.produtor = {
-            'nmProdutor': "Sebastião Salgado"
+            "nrDocumento": "083.843.589-07",
+            "nmProdutor": "Fernando Paladini",
+            "nrTelefone": "(48) 99845-9684",
+            "dsEmail": "paladini@1doc.com.br"
         }
 
         # binds the app to the current context
@@ -22,53 +25,82 @@ class ProdutorTestCase(unittest.TestCase):
 
     def test_produtor_creation(self):
         """Test API can create a produtor (POST request)"""
-        res = self.client().post('/produtor/', data=self.produtor)
+        res = self.client().post('/Produtor/', data=self.produtor)
+        res_json = json.loads(res.data.decode('utf-8').replace("'", "\""))
         self.assertEqual(res.status_code, 201)
-        self.assertIn('Sebastião Salgado', str(res.data))
+        self.assertEqual(self.produtor["nmProdutor"], res_json["nmProdutor"])
 
     def test_api_can_get_all_produtores(self):
         """Test API can get a produtor (GET request)."""
-        res = self.client().post('/produtor/', data=self.produtor)
+
+        # Insert new produtor
+        res = self.client().post('/Produtor/', data=self.produtor)
         self.assertEqual(res.status_code, 201)
-        res = self.client().get('/produtor/')
+        
+        # Get inserted produtor
+        res = self.client().get('/Produtor/')
+        res_json = json.loads(res.data.decode('utf-8').replace("'", "\""))
+        
         self.assertEqual(res.status_code, 200)
-        self.assertIn('Sebastião Salgado', str(res.data))
+        self.assertEqual(self.produtor["nmProdutor"], res_json[0]["nmProdutor"])
+
 
     def test_api_can_get_produtor_by_id(self):
         """Test API can get a single produtor by using it's id."""
-        rv = self.client().post('/produtor/', data=self.produtor)
+
+        # Insert new produtor
+        rv = self.client().post('/Produtor/', data=self.produtor)
         self.assertEqual(rv.status_code, 201)
-        result_in_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
-        result = self.client().get(
-            '/produtor/{}'.format(result_in_json['id']))
+
+        # Get the produtor recently created.
+        res_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
+        result = self.client().get('/Produtor/{}'.format(res_json['idProdutor']))
+        
+        # Assert that produtor exists and has the same value of the inserted produtor.
         self.assertEqual(result.status_code, 200)
-        self.assertIn('Sebastião Salgado', str(result.data))
+        self.assertEqual(self.produtor["nmProdutor"], res_json["nmProdutor"])
+
 
     def test_produtor_can_be_edited(self):
         """Test API can edit an existing produtor. (PUT request)"""
-        rv = self.client().post(
-            '/produtor/',
-            data={'name': 'Vincent Van Gogh'})
+        updated_data = {
+            "nrDocumento": "072.789.102-10",
+            "nmProdutor": "Fernando Paladini Joi",
+            "nrTelefone": "(48) 99845-9684",
+            "dsEmail": "fnpaladini@gmail.com"
+        }
+
+        # Insert new produtor
+        rv = self.client().post('/Produtor/', data=self.produtor)
         self.assertEqual(rv.status_code, 201)
-        rv = self.client().put(
-            '/produtor/1',
-            data={
-                "name": "Sebastião Salgado"
-            })
+
+        # Update produtor
+        rv = self.client().put('/Produtor/1', data=updated_data)
         self.assertEqual(rv.status_code, 200)
-        results = self.client().get('/produtor/1')
-        self.assertIn('Sebastião Salgado', str(results.data))
+
+        # Get same produtor and check if the name has changed.
+        results = self.client().get('/Produtor/1')
+        res_json = json.loads(results.data.decode('utf-8').replace("'", "\""))
+        
+        self.assertEqual(updated_data["nrDocumento"], res_json["nrDocumento"])
+        self.assertEqual(updated_data["nmProdutor"], res_json["nmProdutor"])
+        self.assertEqual(updated_data["nrTelefone"], res_json["nrTelefone"])
+        self.assertEqual(updated_data["dsEmail"], res_json["dsEmail"])
+
 
     def test_produtor_deletion(self):
         """Test API can delete an existing produtor. (DELETE request)."""
-        rv = self.client().post(
-            '/produtor/',
-            data={'name': 'Sebastião Salgado'})
+        
+        # Create new produtor
+        rv = self.client().post('/Produtor/', data=self.produtor)
         self.assertEqual(rv.status_code, 201)
-        res = self.client().delete('/produtor/1')
+
+        # Delete produtor created earlier
+        res = self.client().delete('/Produtor/1')
         self.assertEqual(res.status_code, 200)
+
         # Test to see if it exists, should return a 404
-        result = self.client().get('/produtor/1')
+        result = self.client().get('/Produtor/1')
         self.assertEqual(result.status_code, 404)
 
     def tearDown(self):
