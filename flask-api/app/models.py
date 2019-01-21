@@ -20,8 +20,6 @@ class Estabelecimento(db.Model):
     nrLongitude = db.Column(db.Float)
     stAtivo = db.Column(db.Boolean)
     idCliente = db.Column(db.Integer)
-    # produtores
-    # ueps
     
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(

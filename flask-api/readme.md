@@ -1,9 +1,5 @@
 # Flask API - Granter
 
-## Description
-
-TODO
-
 ## Setup
 
 Before anything else, you need to install all needed packages. If you have not started an environment, please do that with the following commands:

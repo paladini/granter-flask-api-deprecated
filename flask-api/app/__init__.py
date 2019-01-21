@@ -386,12 +386,10 @@ def create_app(config_name):
     @app.route('/Estabelecimento/<int:idEstabelecimento>/unidadeExploracao/<int:idUnidadeExploracao>/desativar', methods=['PUT'])
     def estabelecimento_unidade_exploracao_deactivate(idEstabelecimento, idUnidadeExploracao, **kwargs):
         """
-            Update an UnidadeExploracao.stAtiva to value "True".
+            Update an UnidadeExploracao.stAtiva to value "False".
         """
         if request.method == 'PUT':
 
-            # Get all the parameters for creating an UnidadeExploracao
-            # params = Produtor.get_params(request)
             unidExp = UnidadeExploracao.query.filter_by(cdEstabelecimento=idEstabelecimento).filter_by(idUnidadeExploracao=idUnidadeExploracao).first()
             if not unidExp:
                 abort(404) 
