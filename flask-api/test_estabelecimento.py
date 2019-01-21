@@ -349,6 +349,88 @@ class EstabelecimentoTestCase(unittest.TestCase):
         self.assertEqual(result.status_code, 404)
         
 
+    def test_api_delete_unidade_exploracao_by_estabelecimento_and_produtor_id(self):
+        """Create a new UnidadeExploracao associated with a specific estabelecimento."""
+
+        # Insert new estabelecimento
+        rv = self.client().post('/Estabelecimento/', data=self.estabelecimento)
+        self.assertEqual(rv.status_code, 201)
+
+        # Get the estabelecimento recently created and associate it with the produtor.
+        res_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
+        self.unidExp1["cdEstabelecimento"] = res_json["idEstabelecimento"]
+
+        # Create a new UnidadeExploracao associated with the Estabelecimento
+        res = self.client().post('/Estabelecimento/{}/unidadeExploracao'.format(res_json["idEstabelecimento"]), data=self.unidExp1)
+        res_json = json.loads(res.data.decode('utf-8').replace("'", "\""))
+        self.assertEqual(res.status_code, 201)
+
+        # Delete the UnidadeExploracao from the database
+        result = self.client().delete('/Estabelecimento/{}/unidadeExploracao/{}'.format(self.unidExp1["cdEstabelecimento"], res_json['idUnidadeExploracao']))
+
+        # Test to see if it exists, should return a 404
+        result = self.client().get('/UnidadeExploracao/{}'.format(res_json["idUnidadeExploracao"]))
+        res_json = json.loads(res.data.decode('utf-8').replace("'", "\""))
+        self.assertEqual(result.status_code, 404)
+        # Try to find the row in the database, if found returns 404 because it was not deleted
+        # print(res_json)
+        # for i,row in res_json.items():
+        # if row["idUnidadeExploracao"] == res_json["idUnidadeExploracao"]:
+            # abort(404)
+
+        # self.assertEqual(result.status_code, 200)
+
+    def test_api_activate_unidade_exploracao(self):
+        """Try to activate an specific UnidadeExploracao by it's id."""
+
+        # Insert new estabelecimento
+        rv = self.client().post('/Estabelecimento/', data=self.estabelecimento)
+        self.assertEqual(rv.status_code, 201)
+
+        # Get the estabelecimento recently created and associate it with the produtor.
+        res_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
+        self.unidExp1["cdEstabelecimento"] = res_json["idEstabelecimento"]
+        self.unidExp1["stAtiva"] = 0
+
+        # Create a new UnidadeExploracao associated with the Estabelecimento
+        res = self.client().post('/Estabelecimento/{}/unidadeExploracao'.format(res_json["idEstabelecimento"]), data=self.unidExp1)
+        res_json = json.loads(res.data.decode('utf-8').replace("'", "\""))
+        self.assertEqual(res.status_code, 201)
+
+        # Delete the UnidadeExploracao from the database
+        result = self.client().put('/Estabelecimento/{}/unidadeExploracao/{}/ativar'.format(self.unidExp1["cdEstabelecimento"], res_json['idUnidadeExploracao']))
+        self.assertEqual(result.status_code, 200)
+
+        # Get the UnidadeExploracao object.
+        result = self.client().get('/UnidadeExploracao/{}'.format(res_json["idUnidadeExploracao"]))
+        res_json = json.loads(res.data.decode('utf-8').replace("'", "\""))
+        self.assertEqual(res_json["stAtiva"], True)
+    
+    def test_api_deactivate_unidade_exploracao(self):
+        """Try to activate an specific UnidadeExploracao by it's id."""
+
+        # Insert new estabelecimento
+        rv = self.client().post('/Estabelecimento/', data=self.estabelecimento)
+        self.assertEqual(rv.status_code, 201)
+
+        # Get the estabelecimento recently created and associate it with the produtor.
+        res_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
+        self.unidExp2["cdEstabelecimento"] = res_json["idEstabelecimento"]
+
+        # Create a new UnidadeExploracao associated with the Estabelecimento
+        res = self.client().post('/Estabelecimento/{}/unidadeExploracao'.format(res_json["idEstabelecimento"]), data=self.unidExp2)
+        res_json = json.loads(res.data.decode('utf-8').replace("'", "\""))
+        self.assertEqual(res.status_code, 201)
+
+        # Delete the UnidadeExploracao from the database
+        result = self.client().put('/Estabelecimento/{}/unidadeExploracao/{}/desativar'.format(self.unidExp2["cdEstabelecimento"], res_json['idUnidadeExploracao']))
+        self.assertEqual(result.status_code, 200)
+
+        # Get the UnidadeExploracao object.
+        result = self.client().get('/UnidadeExploracao/{}'.format(res_json["idUnidadeExploracao"]))
+        res_json = json.loads(res.data.decode('utf-8').replace("'", "\""))
+        self.assertEqual(res_json["stAtiva"], False)
+
     def tearDown(self):
         """teardown all initialized variables."""
         with self.app.app_context():

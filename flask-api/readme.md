@@ -33,10 +33,6 @@ Let's install all the needed packages with the following command:
 (env) $ pip install -r requirements.txt
 ```
 
-Now you should be able to run the code without any problems.
-
-### 2.1 - Setup database
-
 Type the following commands in your Terminal in order to migrate the models to our PostgreSQL database:
 
 ```
@@ -45,8 +41,19 @@ Type the following commands in your Terminal in order to migrate the models to o
 (env) $ python manage.py db upgrade
 ```
 
-
+Now you should be able to run the code without any problems.
 
 ## How to Use
 
-TODO.
+In order to run the server:
+
+```
+python manage.py runserver
+```
+
+In order to test the code:
+```
+python test_estabelecimento.py
+python test_produtor.py
+python test_unidade_exploracao.py
+```
