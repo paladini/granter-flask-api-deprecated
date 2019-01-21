@@ -99,7 +99,7 @@ class Produtor(db.Model):
             'nmProdutor': str(request.data.get('nmProdutor')),
             'nrTelefone': str(request.data.get('nrTelefone')),
             'dsEmail': str(request.data.get('dsEmail')),
-            'cdEstabelecimento': str(request.data.get('cdEstabelecimento'))
+            'cdEstabelecimento': request.data.get('cdEstabelecimento')
         }
 
         idProd = request.data.get('idProdutor')
@@ -144,6 +144,24 @@ class UnidadeExploracao(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+    @staticmethod
+    def get_params(request):
+
+        data = {
+            'nrUnidadeExploracao': request.data.get('nrUnidadeExploracao'),
+            'qtCapacidadeAlojamento': request.data.get('qtCapacidadeAlojamento'),
+            'csTipoUnidadeExploracao': str(request.data.get('csTipoUnidadeExploracao')),
+            'stAtiva': bool(request.data.get('stAtiva')),
+            'csTipoAnimal': str(request.data.get('csTipoAnimal')),
+            'cdEstabelecimento': request.data.get('cdEstabelecimento')
+        }
+
+        idUnid = request.data.get('idUnidadeExploracao')
+        if idUnid:
+            data["idUnidadeExploracao"] = idUnid
+            
+        return data
 
     @staticmethod
     def get_all():

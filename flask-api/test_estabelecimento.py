@@ -23,6 +23,36 @@ class EstabelecimentoTestCase(unittest.TestCase):
             "stAtivo": True,
             "idCliente": 10
         }
+        self.produtor1 = {
+            "nrDocumento": "083.843.589-07",
+            "nmProdutor": "Fernando Paladini",
+            "nrTelefone": "(48) 99845-9684",
+            "dsEmail": "paladini@1doc.com.br",
+            "cdEstabelecimento": 0
+        }
+        self.produtor2 = {
+            "nrDocumento": "281.512.589-07",
+            "nmProdutor": "Fernando Paladini Joi",
+            "nrTelefone": "(48) 99845-9684",
+            "dsEmail": "fnpaladini@gmail.com",
+            "cdEstabelecimento": 0
+        }
+        self.unidExp1 = {
+            "nrUnidadeExploracao": 19515,
+            "qtCapacidadeAlojamento": 250,
+            "csTipoUnidadeExploracao": "UPL",
+            "stAtiva": True,
+            "csTipoAnimal": "SU",
+            "cdEstabelecimento": 0
+        }
+        self.unidExp2 = {
+            "nrUnidadeExploracao": 8591,
+            "qtCapacidadeAlojamento": 150,
+            "csTipoUnidadeExploracao": "Terminação",
+            "stAtiva": True,
+            "csTipoAnimal": "AV",
+            "cdEstabelecimento": 0
+        }
 
         # binds the app to the current context
         with self.app.app_context():
@@ -146,12 +176,187 @@ class EstabelecimentoTestCase(unittest.TestCase):
         result = self.client().get('/Estabelecimento/1')
         self.assertEqual(result.status_code, 404)
 
+    def test_api_get_produtores_by_estabelecimento_id(self):
+        """Get produtores from a given estabelecimento by using it's id."""
+
+        # Insert new estabelecimento
+        rv = self.client().post('/Estabelecimento/', data=self.estabelecimento)
+        self.assertEqual(rv.status_code, 201)
+
+        # Get the estabelecimento recently created and associate it with the produtor.
+        res_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
+        self.produtor1["cdEstabelecimento"] = res_json["idEstabelecimento"]
+        self.produtor2["cdEstabelecimento"] = res_json["idEstabelecimento"]
+
+        # Create a new produtor
+        res = self.client().post('/Produtor/', data=self.produtor1)
+        self.assertEqual(res.status_code, 201)
+
+        # Create a new produtor
+        res = self.client().post('/Produtor/', data=self.produtor2)
+        self.assertEqual(res.status_code, 201)
+
+        # Check if produtores was correctly associated with Estabelecimento
+        result = self.client().get('/Estabelecimento/{}/Produtor'.format(res_json['idEstabelecimento']))
+        res_json = json.loads(result.data.decode('utf-8').replace("'", "\""))
+
+        # Assert that produtores exists and has the same value of the inserted estabelecimento.
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(2, len(res_json))
+        
+        # Assert produtor1 data.
+        self.assertEqual(self.produtor1["nrDocumento"], res_json[0]["nrDocumento"])
+        self.assertEqual(self.produtor1["nmProdutor"], res_json[0]["nmProdutor"])
+        self.assertEqual(self.produtor1["nrTelefone"], res_json[0]["nrTelefone"])
+        self.assertEqual(self.produtor1["dsEmail"], res_json[0]["dsEmail"])
+        self.assertEqual(self.produtor1["cdEstabelecimento"], res_json[0]["cdEstabelecimento"])
+        
+        # Assert produto2 data.
+        self.assertEqual(self.produtor2["nrDocumento"], res_json[1]["nrDocumento"])
+        self.assertEqual(self.produtor2["nmProdutor"], res_json[1]["nmProdutor"])
+        self.assertEqual(self.produtor2["nrTelefone"], res_json[1]["nrTelefone"])
+        self.assertEqual(self.produtor2["dsEmail"], res_json[1]["dsEmail"])
+        self.assertEqual(self.produtor2["cdEstabelecimento"], res_json[1]["cdEstabelecimento"])
+        
+
+    def test_api_get_unidade_exploracao_by_estabelecimento_id(self):
+        """Get UnidadeExploracao from a given estabelecimento by using it's id."""
+
+        # Insert new estabelecimento
+        rv = self.client().post('/Estabelecimento/', data=self.estabelecimento)
+        self.assertEqual(rv.status_code, 201)
+
+        # Get the estabelecimento recently created and associate it with the produtor.
+        res_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
+        self.unidExp1["cdEstabelecimento"] = res_json["idEstabelecimento"]
+        self.unidExp2["cdEstabelecimento"] = res_json["idEstabelecimento"]
+
+        # Create a new UnidadeExploracao
+        res = self.client().post('/Estabelecimento/{}/unidadeExploracao'.format(res_json["idEstabelecimento"]), data=self.unidExp1)
+        self.assertEqual(res.status_code, 201)
+
+        # Create a new UnidadeExploracao
+        res = self.client().post('/Estabelecimento/{}/unidadeExploracao'.format(res_json["idEstabelecimento"]), data=self.unidExp2)
+        self.assertEqual(res.status_code, 201)
+
+        # Check if UnidadeExploracao was correctly associated with Estabelecimento
+        result = self.client().get('/Estabelecimento/{}/UnidadeExploracao'.format(res_json['idEstabelecimento']))
+        res_json = json.loads(result.data.decode('utf-8').replace("'", "\""))
+
+        # Assert that UnidadeExploracao exists and has the same value of the inserted estabelecimento.
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(2, len(res_json))
+        
+        # Assert unidExp1 data.
+        self.assertEqual(self.unidExp1["nrUnidadeExploracao"], res_json[0]["nrUnidadeExploracao"])
+        self.assertEqual(self.unidExp1["qtCapacidadeAlojamento"], res_json[0]["qtCapacidadeAlojamento"])
+        self.assertEqual(self.unidExp1["csTipoUnidadeExploracao"], res_json[0]["csTipoUnidadeExploracao"])
+        self.assertEqual(self.unidExp1["stAtiva"], res_json[0]["stAtiva"])
+        self.assertEqual(self.unidExp1["csTipoAnimal"], res_json[0]["csTipoAnimal"])
+        self.assertEqual(self.unidExp1["cdEstabelecimento"], res_json[0]["cdEstabelecimento"])
+        
+        # Assert unidExp2 data.
+        self.assertEqual(self.unidExp2["nrUnidadeExploracao"], res_json[1]["nrUnidadeExploracao"])
+        self.assertEqual(self.unidExp2["qtCapacidadeAlojamento"], res_json[1]["qtCapacidadeAlojamento"])
+        self.assertEqual(self.unidExp2["csTipoUnidadeExploracao"], res_json[1]["csTipoUnidadeExploracao"])
+        self.assertEqual(self.unidExp2["stAtiva"], res_json[1]["stAtiva"])
+        self.assertEqual(self.unidExp2["csTipoAnimal"], res_json[1]["csTipoAnimal"])
+        self.assertEqual(self.unidExp2["cdEstabelecimento"], res_json[1]["cdEstabelecimento"])
+       
+    def test_api_post_produtor_by_estabelecimento_id(self):
+        """Create a new produtor associated with a specific estabelecimento."""
+
+        # Insert new estabelecimento
+        rv = self.client().post('/Estabelecimento/', data=self.estabelecimento)
+        self.assertEqual(rv.status_code, 201)
+
+        # Get the estabelecimento recently created and associate it with the produtor.
+        res_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
+        self.produtor1["cdEstabelecimento"] = res_json["idEstabelecimento"]
+
+        # Create a new produtor associated with the Estabelecimento
+        res = self.client().post('/Estabelecimento/{}/produtor'.format(res_json["idEstabelecimento"]), data=self.produtor1)
+        self.assertEqual(res.status_code, 201)
+
+        # Check if the produtor was correctly associated with Estabelecimento
+        result = self.client().get('/Estabelecimento/{}/Produtor'.format(res_json['idEstabelecimento']))
+        res_json = json.loads(result.data.decode('utf-8').replace("'", "\""))
+
+        # Assert that produtor exists and is associated with Estabelecimento.
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(1, len(res_json))
+        
+        # Assert produtor1 data.
+        self.assertEqual(self.produtor1["nrDocumento"], res_json[0]["nrDocumento"])
+        self.assertEqual(self.produtor1["nmProdutor"], res_json[0]["nmProdutor"])
+        self.assertEqual(self.produtor1["nrTelefone"], res_json[0]["nrTelefone"])
+        self.assertEqual(self.produtor1["dsEmail"], res_json[0]["dsEmail"])
+        self.assertEqual(self.produtor1["cdEstabelecimento"], res_json[0]["cdEstabelecimento"])
+    
+    def test_api_post_unidade_exploracao_by_estabelecimento_id(self):
+        """Create a new UnidadeExploracao associated with a specific estabelecimento."""
+
+        # Insert new estabelecimento
+        rv = self.client().post('/Estabelecimento/', data=self.estabelecimento)
+        self.assertEqual(rv.status_code, 201)
+
+        # Get the estabelecimento recently created and associate it with the UnidadeExploracao.
+        res_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
+        self.unidExp1["cdEstabelecimento"] = res_json["idEstabelecimento"]
+
+        # Create a new unidExp associated with the Estabelecimento
+        res = self.client().post('/Estabelecimento/{}/unidadeExploracao'.format(res_json["idEstabelecimento"]), data=self.unidExp1)
+        self.assertEqual(res.status_code, 201)
+
+        # Check if the unidExp was correctly associated with Estabelecimento
+        result = self.client().get('/Estabelecimento/{}/UnidadeExploracao'.format(res_json['idEstabelecimento']))
+        res_json = json.loads(result.data.decode('utf-8').replace("'", "\""))
+
+        # Assert that unidExp exists and is associated with Estabelecimento.
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(1, len(res_json))
+        
+        # Assert unidExp data.
+        self.assertEqual(self.unidExp1["nrUnidadeExploracao"], res_json[0]["nrUnidadeExploracao"])
+        self.assertEqual(self.unidExp1["qtCapacidadeAlojamento"], res_json[0]["qtCapacidadeAlojamento"])
+        self.assertEqual(self.unidExp1["csTipoUnidadeExploracao"], res_json[0]["csTipoUnidadeExploracao"])
+        self.assertEqual(self.unidExp1["stAtiva"], res_json[0]["stAtiva"])
+        self.assertEqual(self.unidExp1["csTipoAnimal"], res_json[0]["csTipoAnimal"])
+        self.assertEqual(self.unidExp1["cdEstabelecimento"], res_json[0]["cdEstabelecimento"])
+        
+
+    def test_api_delete_produtor_by_estabelecimento_and_produtor_id(self):
+        """Create a new produtor associated with a specific estabelecimento."""
+
+        # Insert new estabelecimento
+        rv = self.client().post('/Estabelecimento/', data=self.estabelecimento)
+        self.assertEqual(rv.status_code, 201)
+
+        # Get the estabelecimento recently created and associate it with the produtor.
+        res_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
+        self.produtor1["cdEstabelecimento"] = res_json["idEstabelecimento"]
+
+        # Create a new produtor associated with the Estabelecimento
+        res = self.client().post('/Estabelecimento/{}/produtor'.format(res_json["idEstabelecimento"]), data=self.produtor1)
+        res_json = json.loads(res.data.decode('utf-8').replace("'", "\""))
+        self.assertEqual(res.status_code, 201)
+
+        # Delete the produtor from the database
+        result = self.client().delete('/Estabelecimento/{}/produtor/{}'.format(self.produtor1["cdEstabelecimento"], res_json['idProdutor']))
+
+        # Test to see if it exists, should return a 404
+        result = self.client().get('/Produtor/{}'.format(res_json["idProdutor"]))
+        self.assertEqual(result.status_code, 404)
+        
+
     def tearDown(self):
         """teardown all initialized variables."""
         with self.app.app_context():
             # drop all tables
             db.session.remove()
             db.drop_all()
+
+
 
 
 # Make the tests conveniently executable

@@ -191,6 +191,179 @@ def create_app(config_name):
             response.status_code = 200
             return response
 
+    @app.route('/Estabelecimento/<int:idEstabelecimento>/Produtor', methods=['GET'])
+    def estabelecimento_produtor_get(idEstabelecimento, **kwargs):
+     
+        # Get all produtores associated with this estabelecimento
+        if request.method == 'GET':
+
+            produtores = Produtor.query.filter_by(cdEstabelecimento=idEstabelecimento).all()
+            if not produtores:
+                abort(404) # Raise an HTTPException with a 404 not found status code
+            
+            results = []
+            for produt in produtores:
+                obj = {
+                    'idProdutor': produt.idProdutor,
+                    'nrDocumento': produt.nrDocumento,
+                    'nmProdutor': produt.nmProdutor,
+                    'nrTelefone': produt.nrTelefone,
+                    'dsEmail': produt.dsEmail,
+                    'cdEstabelecimento': produt.cdEstabelecimento
+                }
+                results.append(obj)
+            
+            response = jsonify(results)
+            response.status_code = 200
+            return response
+        else:
+            abort(404)
+
+    @app.route('/Estabelecimento/<int:idEstabelecimento>/UnidadeExploracao', methods=['GET'])
+    def estabelecimento_unidade_exploracao_get(idEstabelecimento, **kwargs):
+     
+        # Get all UnidadeExploracao associated with this estabelecimento
+        if request.method == 'GET':
+
+            unids = UnidadeExploracao.query.filter_by(cdEstabelecimento=idEstabelecimento).all()
+            if not unids:
+                abort(404) # Raise an HTTPException with a 404 not found status code
+            
+            results = []
+            for unid in unids:
+                obj = {
+                    'idUnidadeExploracao': unid.idUnidadeExploracao,
+                    'nrUnidadeExploracao': unid.nrUnidadeExploracao,
+                    'qtCapacidadeAlojamento': unid.qtCapacidadeAlojamento,
+                    'csTipoUnidadeExploracao': unid.csTipoUnidadeExploracao,
+                    'stAtiva': unid.stAtiva,
+                    'csTipoAnimal': unid.csTipoAnimal,
+                    'cdEstabelecimento': unid.cdEstabelecimento
+                }
+                results.append(obj)
+            
+            response = jsonify(results)
+            response.status_code = 200
+            return response
+        else:
+            abort(404)
+
+    @app.route('/Estabelecimento/<int:idEstabelecimento>/produtor', methods=['POST'])
+    def estabelecimento_produtor_post(idEstabelecimento, **kwargs):
+        """
+            Create a new produtor associated with the given estabelecimento.
+        """
+        if request.method == 'POST':
+
+            # Get all the parameters for creating a Produtor
+            params = Produtor.get_params(request)
+
+            if params:
+                produt = Produtor(
+                    nrDocumento=params["nrDocumento"],
+                    nmProdutor=params["nmProdutor"],
+                    nrTelefone=params["nrTelefone"],
+                    dsEmail=params["dsEmail"],
+                    cdEstabelecimento=idEstabelecimento
+                )
+                produt.save()
+
+                response = jsonify({
+                    'idProdutor': produt.idProdutor,
+                    'nrDocumento': produt.nrDocumento,
+                    'nmProdutor': produt.nmProdutor,
+                    'nrTelefone': produt.nrTelefone,
+                    'dsEmail': produt.dsEmail,
+                    'cdEstabelecimento': produt.cdEstabelecimento
+                })
+                response.status_code = 201
+                return response
+            else:
+                print(request.data)
+                abort(404)
+        else:
+            abort(404)
+
+    @app.route('/Estabelecimento/<int:idEstabelecimento>/unidadeExploracao', methods=['POST'])
+    def estabelecimento_unidade_exploracao_post(idEstabelecimento, **kwargs):
+        """
+            Create a new UnidadeExploracao associated with the given estabelecimento.
+        """
+        if request.method == 'POST':
+
+            # Get all the parameters for creating a Produtor
+            params = UnidadeExploracao.get_params(request)
+
+            if params:
+                unidExp = UnidadeExploracao(
+                    nrUnidadeExploracao=params["nrUnidadeExploracao"],
+                    qtCapacidadeAlojamento=params["qtCapacidadeAlojamento"],
+                    csTipoUnidadeExploracao=params["csTipoUnidadeExploracao"],
+                    csTipoAnimal=params["csTipoAnimal"],
+                    stAtiva=params["stAtiva"],
+                    cdEstabelecimento=idEstabelecimento
+                )
+                unidExp.save()
+
+                response = jsonify({
+                    'idUnidadeExploracao': unidExp.idUnidadeExploracao,
+                    'nrUnidadeExploracao': unidExp.idUnidadeExploracao,
+                    'qtCapacidadeAlojamento': unidExp.qtCapacidadeAlojamento,
+                    'csTipoUnidadeExploracao': unidExp.csTipoUnidadeExploracao,
+                    'stAtiva': unidExp.stAtiva,
+                    'csTipoAnimal': unidExp.csTipoAnimal,
+                    'cdEstabelecimento': unidExp.cdEstabelecimento
+                })
+                response.status_code = 201
+                return response
+            else:
+                print(request.data)
+                abort(404)
+        else:
+            abort(404)
+
+    @app.route('/Estabelecimento/<int:idEstabelecimento>/produtor/<int:idProdutor>', methods=['DELETE'])
+    def estabelecimento_produtor_delete(idEstabelecimento, idProdutor, **kwargs):
+        """
+            Deletes a produtor associated with the given estabelecimento.
+            P.S: Don't know for sure if should delete only the relationship or both the relationship and the Produtor.
+        """
+        if request.method == 'DELETE':
+
+            # Get all the parameters for creating a Produtor
+            # params = Produtor.get_params(request)
+            produt = Produtor.query.filter_by(cdEstabelecimento=idEstabelecimento).filter_by(idProdutor=idProdutor).first()
+            if not produt:
+                abort(404) 
+
+            produt.delete()
+            return ({
+                "message": "Produtor {} deleted successfully".format(produt.idProdutor) 
+            }, 200)
+        else:
+            abort(404)
+
+    @app.route('/Estabelecimento/<int:idEstabelecimento>/unidadeExploracao/<int:idUnidadeExploracao>', methods=['DELETE'])
+    def estabelecimento_unidade_exploracao_delete(idEstabelecimento, idUnidadeExploracao, **kwargs):
+        """
+            Deletes an UnidadeExploracao associated with the given estabelecimento.
+            P.S: Don't know for sure if should delete only the relationship or both the relationship and the UnidadeExploracao.
+        """
+        if request.method == 'DELETE':
+
+            # Get all the parameters for creating an UnidadeExploracao
+            # params = Produtor.get_params(request)
+            unidExp = UnidadeExploracao.query.filter_by(cdEstabelecimento=idEstabelecimento).filter_by(idUnidadeExploracao=idUnidadeExploracao).first()
+            if not unidExp:
+                abort(404) 
+
+            unidExp.delete()
+            return ({
+                "message": "UnidadeExploracao {} deleted successfully".format(unidExp.idUnidadeExploracao) 
+            }, 200)
+        else:
+            abort(404)
+
     #
     # PRODUTORES
     #
